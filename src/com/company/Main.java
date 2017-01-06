@@ -9,47 +9,55 @@ public class Main {
         Scanner scInt = new Scanner(System.in); // Integer scanner.
         Receipt receipt = new Receipt();
         int role = 0;
-        boolean evaluating = true;
-        while (evaluating) {
-            System.out.println("Are you a regular customer, a member, or an employee?");
-            System.out.println("(1) Regular Customer\n(2) Member\n(3) Employee");
-            try {
-                role = scInt.nextInt();
-                evaluating = false;
-            } catch (InputMismatchException ime) {
-                System.out.println("Invalid ID. Please input a number.");
-            }
-        }
+        boolean evaluating = true; boolean action = true;
+
         Customer person;
         String roleString;
-        if (role == 1) {
-            person = new Customer(false);
-            roleString = "Regular_Customer";
-        } else if (role == 2) {
-            person = new Member(true);
-            roleString = "Member";
-        } else {
-            /*
-            evaluating = true; int membership = 2;
+
+        while (action) {
             while (evaluating) {
-                System.out.println("Is this employee a member?");
-                System.out.println("(1) Yes\n(2) No");
+                System.out.println("Are you a regular customer, a member, or an employee?");
+                System.out.println("(1) Regular Customer\n(2) Member\n(3) Employee");
                 try {
-                    membership = scInt.nextInt();
-                    evaluating = false;
+                    role = scInt.nextInt();
+                    if (role == 1 || role == 2 || role == 3) {
+                        evaluating = false;
+                    } else {
+                        System.out.println("Invalid ID. Please input a number (1-3).");
+                    }
                 } catch (InputMismatchException ime) {
                     System.out.println("Invalid ID. Please input a number.");
                 }
             }
-            if (membership == 1) {
-                hasMembership = true;
-            } else {
-                hasMembership = false;
+            evaluating = true;
+            while (evaluating) {
+                if (role == 1) {
+                    person = new Customer(false);
+                    roleString = "Regular_Customer";
+                    evaluating = false; action = false;
+                } else if (role == 2) {
+                    person = new Member(true);
+                    roleString = "Member";
+                    // Verify that this person is a Member.
+                    boolean verifying = true;
+                    while (verifying) {
+
+                    }
+                    evaluating = false; action = false;
+                } else {
+                    person = new Employee(true);
+                    roleString = "Employee";
+                    // Verify that this person is an Employee.
+                    boolean verifying = true;
+                    while (verifying) {
+                        // ...
+                    }
+                    evaluating = false; action = false;
+                }
             }
-            */
-            person = new Employee(true);
-            roleString = "Employee";
         }
+
+
 
         boolean looping = true;
         while (looping) {
@@ -74,6 +82,7 @@ public class Main {
             }
         }
         receipt.viewReceipt();
+
         if (receipt.purchasedMembership()) {
             String ID = "000000"; StringBuffer sb = new StringBuffer();
             Random rand = new Random();
@@ -84,7 +93,7 @@ public class Main {
                     sb.append(String.valueOf(num));
                 }
                 ID = sb.toString();
-                Scanner scanMemberIDS = new Scanner(new File("Members"));
+                Scanner scanMemberIDS = new Scanner(new File("Members.txt"));
                 boolean duplicateID = false;
                 while (scanMemberIDS.hasNext()) {
                     String line = scanMemberIDS.nextLine();
@@ -96,7 +105,10 @@ public class Main {
                 if (!duplicateID) {
                     looping = false;
                 }
-                scanMemberIDS.close();
+                FileWriter fw = new FileWriter("Members.txt");
+                PrintWriter pw = new PrintWriter(fw);
+                pw.write(ID + " 0 0 0");
+                pw.close(); fw.close(); scanMemberIDS.close();
             }
             System.out.println("\nThank you for purchasing a membership!");
             System.out.println("Your membership ID is: " + ID);
