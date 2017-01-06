@@ -9,12 +9,12 @@ public class Main {
         Scanner scInt = new Scanner(System.in); // Integer scanner.
         Receipt receipt = new Receipt();
         int role = 0;
-        boolean evaluating = true; boolean action = true;
+        boolean evaluating = true; boolean looping = true;
 
         Customer person;
-        String roleString;
+        String roleString = "Regular_Customer";
 
-        while (action) {
+        while (looping) {
             while (evaluating) {
                 System.out.println("Are you a regular customer, a member, or an employee?");
                 System.out.println("(1) Regular Customer\n(2) Member\n(3) Employee");
@@ -34,32 +34,69 @@ public class Main {
                 if (role == 1) {
                     person = new Customer(false);
                     roleString = "Regular_Customer";
-                    evaluating = false; action = false;
+                    evaluating = false; looping = false;
                 } else if (role == 2) {
                     person = new Member(true);
                     roleString = "Member";
                     // Verify that this person is a Member.
-                    boolean verifying = true;
+                    boolean verifying = true; boolean verified = false;
                     while (verifying) {
-
+                        System.out.println("Input your member ID. Type \"-1\" to return.");
+                        String presumedID = scInt.nextLine();
+                        if (presumedID.length() == 6) {
+                            Scanner scanMemberIDS = new Scanner(new File("Members.txt"));
+                            while (scanMemberIDS.hasNext()) {
+                                String line = scanMemberIDS.nextLine();
+                                String[] divisions = line.split("\\s+");
+                                if (divisions[0].equals(presumedID)) {
+                                    verified = true; verifying = false;
+                                    break;
+                                }
+                            }
+                        } else if (presumedID.equals("-1")) {
+                            verifying = false;
+                        } else {
+                            System.out.println("Member IDs are 6 digits long.");
+                        }
                     }
-                    evaluating = false; action = false;
+                    if (verified) {
+                        evaluating = false; looping = false;
+                    } else {
+                        evaluating = false;
+                    }
                 } else {
                     person = new Employee(true);
                     roleString = "Employee";
                     // Verify that this person is an Employee.
-                    boolean verifying = true;
+                    boolean verifying = true; boolean verified = false;
                     while (verifying) {
-                        // ...
+                        System.out.println("Input your SSN. Type \"-1\" to return.");
+                        String presumedID = scInt.nextLine();
+                        if (presumedID.length() == 6) {
+                            Scanner scanEmployeeSSNs = new Scanner(new File("Employee.txt"));
+                            while (scanEmployeeSSNs.hasNext()) {
+                                String line = scanEmployeeSSNs.nextLine();
+                                String[] divisions = line.split("\\s+");
+                                if (divisions[0].equals(presumedID)) {
+                                    verified = true; verifying = false;
+                                    break;
+                                }
+                            }
+                        } else if (presumedID.equals("-1")) {
+                            verifying = false;
+                        } else {
+                            System.out.println("Member IDs are 6 digits long.");
+                        }
                     }
-                    evaluating = false; action = false;
+                    if (verified) {
+                        evaluating = false; looping = false;
+                    } else {
+                        evaluating = false;
+                    }
                 }
             }
         }
-
-
-
-        boolean looping = true;
+        looping = true;
         while (looping) {
             int action = 0; evaluating = true;
             while (evaluating) {
