@@ -6,6 +6,6 @@ public class Member extends Customer {
         super(hm);
     }
 
-    public int [] memberStats = new int [3];
+    //public int [] memberStats = new int [3];
 
 }

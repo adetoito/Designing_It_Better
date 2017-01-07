@@ -39,14 +39,14 @@ public class Receipt {
             retail = 1.00;
         } else {
             if (role.equals("Member")) {
-                itemsPurchasable[1] = "Classes"; itemIDS[0] = 1; costs[0] = 8.00;
-                itemsPurchasable[2] = "Aquatics"; itemIDS[1] = 2; costs[1] = 10.00;
-                itemsPurchasable[3] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 20.00;
+                itemsPurchasable[0] = "Classes"; itemIDS[0] = 1; costs[0] = 8.00;
+                itemsPurchasable[1] = "Aquatics"; itemIDS[1] = 2; costs[1] = 10.00;
+                itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 20.00;
                 retail = 0.80;
             } else if (role.equals("Employee")) {
-                itemsPurchasable[1] = "Classes"; itemIDS[0] = 1; costs[0] = 3.00;
-                itemsPurchasable[2] = "Aquatics"; itemIDS[1] = 2; costs[1] = 7.00;
-                itemsPurchasable[3] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 15.00;
+                itemsPurchasable[0] = "Classes"; itemIDS[0] = 1; costs[0] = 3.00;
+                itemsPurchasable[1] = "Aquatics"; itemIDS[1] = 2; costs[1] = 7.00;
+                itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 15.00;
                 retail = 0.90;
             }
         }
@@ -54,16 +54,16 @@ public class Receipt {
         int action; boolean evaluating = true;
         while (evaluating) {
             System.out.println("\nRECEIPT MENU\nType in number ID.\n===========");
-            System.out.println("(0) RESET RECEIPT.\n(1) View receipt.\n(2) Add item.");
+            System.out.println("(1) RESET RECEIPT.\n(2) View receipt.\n(3) Add item.");
             action = scInt.nextInt();
-            if (action == 0) {
+            if (action == 1) {
                 resetReceipt();
                 evaluating = false;
                 System.out.println("\nReceipt reset!");
-            } else if (action == 1) {
+            } else if (action == 2) {
                 viewReceipt();
                 evaluating = false;
-            } else if (action == 2) {
+            } else if (action == 3) {
                 int item = 1;
                 boolean evaluating2 = true;
                 while (evaluating2) {
@@ -95,22 +95,32 @@ public class Receipt {
     public void viewReceipt () {
         System.out.println("RECEIPT:\n");
         for (int i = 0; i < purchased.length; i++) {
-            System.out.println(purchased[i] + " // " + costs[i]);
+            if (purchased[i].equals("-")) {
+                break;
+            } else {
+                System.out.println(purchased[i] + " // $" + costs[i]);
+            }
         }
         System.out.println("\nTOTAL: " + calculateTotal());
     }
 
     public double calculateTotal () {
-        int i = 0; double sum = 0.0;
-        while (costs[i] != -23.45) {
-            sum += costs[i];
+        double sum = 0.0;
+        for (int i = 0; i < costs.length; i++) {
+            if (costs[i] == -23.45) {
+                break;
+            } else {
+                sum += costs[i];
+            }
         }
         return sum;
     }
 
     public void addItem (int item, double retail, String [] items, double [] c) {
-        purchased[index] = items[item];
+        purchased[index] = items[item - 1];
         costs[index] = c[item] * retail;
+        System.out.println("Item added.");
+        index++;
     }
 
     public boolean purchasedMembership () {

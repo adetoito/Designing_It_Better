@@ -6,8 +6,8 @@ public class Employee extends Member {
         super(hm);
     }
 
-    public String SSN;
-    public int hours;
-    public double rate;
+    //public String SSN;
+    //public int hours;
+    //public double rate;
 
 }

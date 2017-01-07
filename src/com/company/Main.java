@@ -6,7 +6,7 @@ import java.io.*;
 public class Main {
 
     public static void main (String [] args) throws IOException {
-        Scanner scInt = new Scanner(System.in); // Integer scanner.
+        Scanner scInt = new Scanner(System.in);
         Receipt receipt = new Receipt();
         int role = 0;
         boolean evaluating = true; boolean looping = true;
@@ -30,6 +30,7 @@ public class Main {
                 }
             }
             evaluating = true;
+            Scanner scInt2 = new Scanner(System.in);
             while (evaluating) {
                 if (role == 1) {
                     person = new Customer(false);
@@ -42,7 +43,7 @@ public class Main {
                     boolean verifying = true; boolean verified = false;
                     while (verifying) {
                         System.out.println("Input your member ID. Type \"-1\" to return.");
-                        String presumedID = scInt.nextLine();
+                        String presumedID = scInt2.nextLine();
                         if (presumedID.length() == 6) {
                             Scanner scanMemberIDS = new Scanner(new File("Members.txt"));
                             while (scanMemberIDS.hasNext()) {
@@ -72,9 +73,9 @@ public class Main {
                     boolean verifying = true; boolean verified = false;
                     while (verifying) {
                         System.out.println("Input your SSN. Type \"-1\" to return.");
-                        String presumedID = scInt.nextLine();
-                        if (presumedID.length() == 6) {
-                            Scanner scanEmployeeSSNs = new Scanner(new File("Employee.txt"));
+                        String presumedID = scInt2.nextLine();
+                        if (presumedID.length() == 11) {
+                            Scanner scanEmployeeSSNs = new Scanner(new File("Employees.txt"));
                             while (scanEmployeeSSNs.hasNext()) {
                                 String line = scanEmployeeSSNs.nextLine();
                                 String[] divisions = line.split("\\s+");
