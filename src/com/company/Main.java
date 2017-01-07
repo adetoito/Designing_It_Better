@@ -12,7 +12,7 @@ public class Main {
         boolean evaluating = true; boolean looping = true;
 
         Customer person;
-        String roleString = "Regular_Customer";
+        String roleString;
 
         while (looping) {
             while (evaluating) {
@@ -35,8 +35,8 @@ public class Main {
                     person = new Customer(false);
                     roleString = "Regular_Customer";
                     evaluating = false; looping = false;
+                    tieLooseEnds(person, roleString, receipt);
                 } else if (role == 2) {
-                    person = new Member(true);
                     roleString = "Member";
                     // Verify that this person is a Member.
                     boolean verifying = true; boolean verified = false;
@@ -60,12 +60,13 @@ public class Main {
                         }
                     }
                     if (verified) {
+                        person = new Member(true);
                         evaluating = false; looping = false;
+                        tieLooseEnds(person, roleString, receipt);
                     } else {
                         evaluating = false;
                     }
                 } else {
-                    person = new Employee(true);
                     roleString = "Employee";
                     // Verify that this person is an Employee.
                     boolean verifying = true; boolean verified = false;
@@ -89,15 +90,19 @@ public class Main {
                         }
                     }
                     if (verified) {
-                        evaluating = false; looping = false;
+                        person = new Employee(true);
+                        evaluating = false; //looping = false;
+                        tieLooseEnds(person, roleString, receipt);
                     } else {
                         evaluating = false;
                     }
                 }
             }
         }
-        looping = true;
+        //looping = true;
+        /*
         while (looping) {
+
             int action = 0; evaluating = true;
             while (evaluating) {
                 System.out.println("\nWhat would you like to do?\nType in number ID.\n================================");
@@ -117,6 +122,7 @@ public class Main {
                     System.out.println("Invalid ID. Please input a number (1 or 2).");
                 }
             }
+
         }
         receipt.viewReceipt();
 
@@ -124,6 +130,61 @@ public class Main {
             String ID = "000000"; StringBuffer sb = new StringBuffer();
             Random rand = new Random();
             looping = true;
+            while (looping) {
+                for (int i = 0; i < 6; i++) {
+                    int num = rand.nextInt(10);
+                    sb.append(String.valueOf(num));
+                }
+                ID = sb.toString();
+                Scanner scanMemberIDS = new Scanner(new File("Members.txt"));
+                boolean duplicateID = false;
+                while (scanMemberIDS.hasNext()) {
+                    String line = scanMemberIDS.nextLine();
+                    String [] divisions = line.split("\\s+");
+                    if (divisions[0].equals(ID)) {
+                        duplicateID = true;
+                    }
+                }
+                if (!duplicateID) {
+                    looping = false;
+                }
+                FileWriter fw = new FileWriter("Members.txt");
+                PrintWriter pw = new PrintWriter(fw);
+                pw.write(ID + " 0 0 0");
+                pw.close(); fw.close(); scanMemberIDS.close();
+            }
+            System.out.println("\nThank you for purchasing a membership!");
+            System.out.println("Your membership ID is: " + ID);
+        }
+        */
+    }
+
+    public static void tieLooseEnds (Customer person, String roleString, Receipt receipt) throws IOException {
+        Scanner scInt = new Scanner(System.in);
+        boolean evaluating = true; int action = 0;
+        while (evaluating) {
+            System.out.println("\nWhat would you like to do?\nType in number ID.\n================================");
+            System.out.println("(1) View and edit receipt.");
+            System.out.println("(2) Finish and pay for transactions.");
+            try {
+                action = scInt.nextInt();
+            } catch (InputMismatchException ime) {
+                System.out.println("Invalid ID. Please input a number.");
+            }
+            if (action == 1) {
+                receipt.receiptMenu(person.isMember(), roleString);
+                evaluating = false;
+            } else if (action == 2) {
+                evaluating = false;
+            } else {
+                System.out.println("Invalid ID. Please input a number (1 or 2).");
+            }
+        }
+        receipt.viewReceipt();
+        boolean looping = true;
+        if (receipt.purchasedMembership()) {
+            String ID = "000000"; StringBuffer sb = new StringBuffer();
+            Random rand = new Random();
             while (looping) {
                 for (int i = 0; i < 6; i++) {
                     int num = rand.nextInt(10);
