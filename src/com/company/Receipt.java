@@ -101,7 +101,7 @@ public class Receipt {
                 System.out.println(purchased[i] + " // $" + costs[i]);
             }
         }
-        System.out.println("\nTOTAL: " + calculateTotal());
+        System.out.println("\nTOTAL: $" + calculateTotal());
     }
 
     public double calculateTotal () {
