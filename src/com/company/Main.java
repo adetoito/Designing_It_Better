@@ -30,7 +30,7 @@ public class Main {
                 }
             }
             evaluating = true;
-            Scanner scInt2 = new Scanner(System.in);
+            Scanner scString = new Scanner(System.in);
             while (evaluating) {
                 if (role == 1) {
                     person = new Customer(false);
@@ -40,91 +40,61 @@ public class Main {
                 } else if (role == 2) {
                     roleString = "Member";
                     // Verify that this person is a Member.
-                    boolean verifying = true; boolean verified = false;
+                    boolean verifying = true;
                     while (verifying) {
-                        System.out.println("Input your member ID. Type \"-1\" to return.");
-                        String presumedID = scInt2.nextLine();
-                        if (presumedID.length() == 6) {
+                        System.out.println("Input your member ID.");
+                        String presumedID = scString.nextLine();
+                        if (presumedID.length() == 6 && !presumedID.equals("-1")) {
                             Scanner scanMemberIDS = new Scanner(new File("Members.txt"));
                             while (scanMemberIDS.hasNext()) {
                                 String line = scanMemberIDS.nextLine();
-                                String[] divisions = line.split("\\s+");
+                                String [] divisions = line.split("\\s+");
                                 if (divisions[0].equals(presumedID)) {
-                                    verified = true; verifying = false;
+                                    verifying = false;
                                     break;
                                 }
                             }
-                        } else if (presumedID.equals("-1")) {
-                            verifying = false;
                         } else {
                             System.out.println("Member IDs are 6 digits long.");
                         }
                     }
-                    if (verified) {
-                        person = new Member(true);
-                        evaluating = false; looping = false;
-                        tieLooseEnds(person, roleString, receipt);
-                    } else {
-                        evaluating = false;
-                    }
+                    person = new Member(true);
+                    evaluating = false; looping = false;
+                    tieLooseEnds(person, roleString, receipt);
                 } else {
                     roleString = "Employee";
                     // Verify that this person is an Employee.
-                    boolean verifying = true; boolean verified = false;
+                    boolean verifying = true;
                     while (verifying) {
-                        System.out.println("Input your SSN. Type \"-1\" to return.");
-                        String presumedID = scInt2.nextLine();
+                        System.out.println("Input your SSN.");
+                        String presumedID = scString.nextLine();
                         if (presumedID.length() == 11) {
                             Scanner scanEmployeeSSNs = new Scanner(new File("Employees.txt"));
                             while (scanEmployeeSSNs.hasNext()) {
                                 String line = scanEmployeeSSNs.nextLine();
                                 String[] divisions = line.split("\\s+");
                                 if (divisions[0].equals(presumedID)) {
-                                    verified = true; verifying = false;
+                                    verifying = false;
                                     break;
                                 }
                             }
-                        } else if (presumedID.equals("-1")) {
-                            verifying = false;
                         } else {
                             System.out.println("Member IDs are 6 digits long.");
                         }
                     }
-                    if (verified) {
-                        person = new Employee(true);
-                        evaluating = false; //looping = false;
-                        tieLooseEnds(person, roleString, receipt);
-                    } else {
-                        evaluating = false;
-                    }
+                    person = new Employee(true);
+                    evaluating = false;
+                    tieLooseEnds(person, roleString, receipt);
                 }
             }
         }
     }
 
     public static void tieLooseEnds (Customer person, String roleString, Receipt receipt) throws IOException {
-        Scanner scInt = new Scanner(System.in);
-        boolean evaluating = true; int action = 0;
-        while (evaluating) {
-            System.out.println("\nWhat would you like to do?\nType in number ID.\n================================");
-            System.out.println("(1) View and edit receipt.");
-            System.out.println("(2) Finish and pay for transactions.");
-            try {
-                action = scInt.nextInt();
-            } catch (InputMismatchException ime) {
-                System.out.println("Invalid ID. Please input a number.");
-            }
-            if (action == 1) {
-                receipt.receiptMenu(person.isMember(), roleString);
-                evaluating = false;
-            } else if (action == 2) {
-                evaluating = false;
-            } else {
-                System.out.println("Invalid ID. Please input a number (1 or 2).");
-            }
-        }
+        receipt.receiptMenu(person.isMember(), roleString);
         receipt.viewReceipt();
         boolean looping = true;
+        System.out.println("Thank you for shopping!");
         if (receipt.purchasedMembership()) {
             String ID = "000000"; StringBuffer sb = new StringBuffer();
             Random rand = new Random();
@@ -146,9 +116,9 @@ public class Main {
                 if (!duplicateID) {
                     looping = false;
                 }
-                FileWriter fw = new FileWriter("Members.txt");
+                FileWriter fw = new FileWriter("Members.txt", true);
                 PrintWriter pw = new PrintWriter(fw);
-                pw.write(ID + " 0 0 0");
+                pw.write("\n" + ID + " 0 0 0");
                 pw.close(); fw.close(); scanMemberIDS.close();
             }
             System.out.println("\nThank you for purchasing a membership!");

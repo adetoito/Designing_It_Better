@@ -1,7 +1,7 @@
 package com.company;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
+import java.text.*;
 
 public class Receipt {
 
@@ -37,32 +37,64 @@ public class Receipt {
             itemsPurchasable[1] = "Classes"; itemIDS[1] = 2; costs[1] = 10.00;
             itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 25.00;
             retail = 1.00;
+            asked = false;
         } else {
             if (role.equals("Member")) {
                 itemsPurchasable[0] = "Classes"; itemIDS[0] = 1; costs[0] = 8.00;
                 itemsPurchasable[1] = "Aquatics"; itemIDS[1] = 2; costs[1] = 10.00;
                 itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 20.00;
                 retail = 0.80;
+                asked = true;
             } else if (role.equals("Employee")) {
                 itemsPurchasable[0] = "Classes"; itemIDS[0] = 1; costs[0] = 3.00;
                 itemsPurchasable[1] = "Aquatics"; itemIDS[1] = 2; costs[1] = 7.00;
                 itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 15.00;
-                retail = 0.90;
+                retail = 0.80;
+                asked = true;
+            }
+        }
+
+        if (!asked) {
+            role = informAboutMembership(retail, itemsPurchasable, costs);
+            if (role.equals("Member")) {
+                isMember = true;
+            } else {
+                isMember = false;
+            }
+        }
+
+        if (!isMember) {
+            itemsPurchasable[0] = "Membership"; itemIDS[0] = 1; costs[0] = 6.50;
+            itemsPurchasable[1] = "Classes"; itemIDS[1] = 2; costs[1] = 10.00;
+            itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 25.00;
+            retail = 1.00;
+            asked = false;
+        } else {
+            if (role.equals("Member")) {
+                itemsPurchasable[0] = "Classes"; itemIDS[0] = 1; costs[0] = 8.00;
+                itemsPurchasable[1] = "Aquatics"; itemIDS[1] = 2; costs[1] = 10.00;
+                itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 20.00;
+                retail = 0.80;
+                asked = true;
+            } else if (role.equals("Employee")) {
+                itemsPurchasable[0] = "Classes"; itemIDS[0] = 1; costs[0] = 3.00;
+                itemsPurchasable[1] = "Aquatics"; itemIDS[1] = 2; costs[1] = 7.00;
+                itemsPurchasable[2] = "Personal Trainer"; itemIDS[2] = 3; costs[2] = 15.00;
+                retail = 0.80;
+                asked = true;
             }
         }
 
         int action; boolean evaluating = true;
         while (evaluating) {
             System.out.println("\nRECEIPT MENU\nType in number ID.\n===========");
-            System.out.println("(1) RESET RECEIPT.\n(2) View receipt.\n(3) Add item.");
+            System.out.println("(1) RESET RECEIPT.\n(2) View receipt.\n(3) Add item.\n(4) Finish and pay for items.");
             action = scInt.nextInt();
             if (action == 1) {
                 resetReceipt();
-                evaluating = false;
                 System.out.println("\nReceipt reset!");
             } else if (action == 2) {
                 viewReceipt();
-                evaluating = false;
             } else if (action == 3) {
                 int item = 1;
                 boolean evaluating2 = true;
@@ -78,7 +110,19 @@ public class Receipt {
                         System.out.println("Invalid ID. Please input a number.");
                     }
                 }
-                addItem(item, retail, itemsPurchasable, costs);
+                boolean isMembership = false;
+                if (item == 1 && role.equals("Membership")) {
+                    isMembership = true;
+                }
+                addItem(item, retail, itemsPurchasable, costs, isMembership);
+            } else if (action == 4) {
+                if (index == 0) {
+                    System.out.println("There aren't any items in the cart!");
+                } else {
+                    evaluating = false;
+                }
+            } else {
+                System.out.println("Invalid ID. Please input a number (1-4).");
             }
         }
     }
@@ -93,15 +137,16 @@ public class Receipt {
     }
 
     public void viewReceipt () {
-        System.out.println("RECEIPT:\n");
+        System.out.println("RECEIPT:");
+        DecimalFormat df = new DecimalFormat("###,##0.##");
         for (int i = 0; i < purchased.length; i++) {
             if (purchased[i].equals("-")) {
                 break;
             } else {
-                System.out.println(purchased[i] + " // $" + costs[i]);
+                System.out.println("- " + purchased[i] + " [Amount: " + quantity[i] + "] // $" + df.format(costs[i]));
             }
         }
-        System.out.println("\nTOTAL: $" + calculateTotal());
+        System.out.println("TOTAL: $" + df.format(calculateTotal()));
     }
 
     public double calculateTotal () {
@@ -116,9 +161,33 @@ public class Receipt {
         return sum;
     }
 
-    public void addItem (int item, double retail, String [] items, double [] c) {
+    public void addItem (int item, double retail, String [] items, double [] c, boolean isMembership) {
+        Scanner scInt = new Scanner(System.in);
+        int amount = 0; boolean looping = true;
+        if (item == 1 && isMembership) {
+            amount = 1;
+        } else {
+            while (looping) {
+                System.out.println("How many of this item do you want to buy?");
+                try {
+                    amount = scInt.nextInt();
+                    if (amount <= 0) {
+                        System.out.println("Please input a number more than 0.");
+                    } else {
+                        looping = false;
+                    }
+                } catch (InputMismatchException ime) {
+                    System.out.println("Please input a number more than 0.");
+                }
+            }
+        }
         purchased[index] = items[item - 1];
-        costs[index] = c[item] * retail;
+        quantity[index] = amount;
+        if (item == 1 && items[item].equals("Membership")) {
+            costs[index] = (c[item - 1] * retail) * amount;
+        } else {
+            costs[index] = c[item - 1] * amount; //Error here
+        }
         System.out.println("Item added.");
         index++;
     }
@@ -132,6 +201,34 @@ public class Receipt {
             }
         }
         return member;
+    }
+
+    public boolean wantsMembership;
+    public boolean asked;
+
+    public String informAboutMembership (double retail, String [] items, double [] c) {
+        Scanner scString = new Scanner(System.in);
+        String response; boolean looping = true;
+        while (looping) {
+            System.out.println("I see you do not have a membership yet!");
+            System.out.println("Would you like to purchase a membership? Yes or No?");
+            response = scString.nextLine().toLowerCase();
+            if (response.equals("yes")) {
+                wantsMembership = true; asked = true;
+                addItem(1, retail, items, c, true);
+                looping = false;
+            } else if (response.equals("no")) {
+                wantsMembership = false; asked = true;
+                looping = false;
+            } else {
+                System.out.println("Invalid answer.");
+            }
+        }
+        if (wantsMembership) {
+            return "Member";
+        } else {
+            return "Regular_Customer";
+        }
     }
 
 }
